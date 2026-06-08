@@ -323,3 +323,37 @@ export function getRandomColor() {
 }
 
 export default botConfig;
+import { SlashCommandBuilder, PermissionFlagsBits } from 'discord.js';
+
+export default {
+  data: new SlashCommandBuilder()
+    .setName('say')
+    .setDescription('Bot sends your message')
+    .addStringOption(option =>
+      option
+        .setName('message')
+        .setDescription('Message to send')
+        .setRequired(true)
+    )
+    .addChannelOption(option =>
+      option
+        .setName('channel')
+        .setDescription('Optional channel to send message')
+        .setRequired(false)
+    )
+    .setDefaultMemberPermissions(PermissionFlagsBits.ManageMessages),
+
+  async execute(interaction) {
+    const message = interaction.options.getString('message');
+    const channel = interaction.options.getChannel('channel') || interaction.channel;
+
+    await channel.send({
+      content: message,
+    });
+
+    await interaction.reply({
+      content: 'Sent ✅',
+      ephemeral: true,
+    });
+  },
+};
